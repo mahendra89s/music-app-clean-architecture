@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.musicapp.view.MainFragment"
-        android:label="MainFragment" />
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_songPlayerFragment"
+            app:destination="@id/songPlayerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/songPlayerFragment"
         android:name="com.example.musicapp.view.SongPlayerFragment"

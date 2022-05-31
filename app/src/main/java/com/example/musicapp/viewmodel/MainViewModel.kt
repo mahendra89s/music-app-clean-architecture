@@ -13,29 +13,31 @@ import com.example.musicapp.mapper.DomainMusicMapper
 import com.example.musicapp.model.Music
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getSongsFromDeviceUseCase : GetSongsFromDeviceUseCase,
+    private val getSongsFromDeviceUseCase: GetSongsFromDeviceUseCase,
     private val domainMusicMapper: DomainMusicMapper
-) :ViewModel() {
+) : ViewModel() {
 
     private val _songs = MutableLiveData<List<Music>>()
-    private val songs : LiveData<List<Music>> = _songs
-    val songsList = mutableListOf<Music>()
+    private val songs: LiveData<List<Music>> = _songs
+    private val songsList = mutableListOf<Music>()
+
     init {
 
         viewModelScope.launch {
-//            getSongsFromDeviceUseCase.invoke().forEach{
-//                Log.d("view model ---","$it")
-//                songsList.add(domainMusicMapper.mapFromEntity(it))
-//            }
-
-
+            Log.d("Heelo", "${getSongsFromDeviceUseCase.invoke()}")
+            getSongsFromDeviceUseCase.invoke().collect {
+                Log.e("viewmodel ---", "sdsdsd")
+                songsList.add(domainMusicMapper.mapFromEntity(it))
+                _songs.value = songsList
+            }
         }
     }
 
-    fun getSongs() : LiveData<List<Music>> = songs
+    fun getSongs(): LiveData<List<Music>> = songs
 }

@@ -15,7 +15,8 @@
             android:textColor="#000000"
             android:text="@string/discover"
             android:textSize="@dimen/s36"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/d20"
+            android:layout_marginTop="@dimen/d20"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

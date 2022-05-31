@@ -7,9 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.musicapp.R
 import com.example.musicapp.adapter.SongListAdapter
 import com.example.musicapp.databinding.FragmentMainBinding
 import com.example.musicapp.model.Music
@@ -17,7 +20,7 @@ import com.example.musicapp.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), SongListAdapter.ClickListener {
     lateinit var binding: FragmentMainBinding
     val viewmodel by viewModels<MainViewModel>()
     override fun onCreateView(
@@ -31,49 +34,19 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-//        viewmodel.getSongs().observe(viewLifecycleOwner){ it ->
-//            Log.e("rv---","$it")
-////            binding.rvSongs.apply {
-////                adapter = SongListAdapter(it)
-////                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-////            }
-//
-//        }
-        val projection = arrayOf(
-            MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.DATA,
-        )
-        val sortOrder = MediaStore.Audio.Media.DATE_ADDED + " DESC"
-        context?.contentResolver?.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            null,
-            null,
-            sortOrder
-        )?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-            val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-            val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-            val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
-            val dataColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-            while (it.moveToNext()) {
-                val id = it.getLong(idColumn)
-                val title = it.getString(titleColumn)
-                val artist = it.getString(artistColumn)
-                val duration = it.getString(durationColumn)
-                val data = it.getString(dataColumn)
-                val contenturi = ContentUris.withAppendedId(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-                Log.e("songs :", "${Music(id,title,artist,duration,data,contenturi)}")
-//                    songs.add(DataMusic(id,title,artist,duration,data,contenturi))
+        viewmodel.getSongs().observe(viewLifecycleOwner){ it ->
+            Log.e("rv---","$it")
+            binding.rvSongs.apply {
+                adapter = SongListAdapter(it,requireContext(),this@MainFragment)
+                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
             }
-//                songList.value = songs
-//                _songs.value = songsList
         }
+        //Add Permission Code
     }
+
+    override fun cLick(music : Music) {
+        findNavController().navigate(R.id.action_mainFragment_to_songPlayerFragment, bundleOf("music" to music))
+    }
+
+
 }
