@@ -10,14 +10,15 @@
         <entry key="app/src/main/res/drawable/bg_seperator.xml" value="0.2805" />
         <entry key="app/src/main/res/drawable/bg_song_image.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/bg_song_player.xml" value="0.202" />
+        <entry key="app/src/main/res/drawable/bg_song_player_motion.xml" value="0.21" />
         <entry key="app/src/main/res/drawable/ic_next.xml" value="0.2805" />
         <entry key="app/src/main/res/drawable/ic_play.xml" value="0.2805" />
         <entry key="app/src/main/res/drawable/ic_previous.xml" value="0.2805" />
         <entry key="app/src/main/res/font-v26/noto.xml" value="0.20729166666666668" />
         <entry key="app/src/main/res/font/noto.xml" value="0.20625" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.16203505771697307" />
-        <entry key="app/src/main/res/layout/fragment_song_player.xml" value="0.22121486854034453" />
+        <entry key="app/src/main/res/layout/fragment_song_player.xml" value="0.1" />
         <entry key="app/src/main/res/layout/list_songs.xml" value="0.2957427536231884" />
       </map>
     </option>

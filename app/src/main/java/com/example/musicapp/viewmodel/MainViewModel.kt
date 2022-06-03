@@ -1,8 +1,5 @@
 package com.example.musicapp.viewmodel
 
-import android.content.ContentUris
-import android.content.Context
-import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +9,6 @@ import com.example.domain.usecase.GetSongsFromDeviceUseCase
 import com.example.musicapp.mapper.DomainMusicMapper
 import com.example.musicapp.model.Music
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,11 +23,8 @@ class MainViewModel @Inject constructor(
     private val songsList = mutableListOf<Music>()
 
     init {
-
         viewModelScope.launch {
-            Log.d("Heelo", "${getSongsFromDeviceUseCase.invoke()}")
             getSongsFromDeviceUseCase.invoke().collect {
-                Log.e("viewmodel ---", "sdsdsd")
                 songsList.add(domainMusicMapper.mapFromEntity(it))
                 _songs.value = songsList
             }

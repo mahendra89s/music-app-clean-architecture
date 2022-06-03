@@ -1,6 +1,7 @@
 package com.example.musicapp.view
 
 import android.content.ContentUris
+import android.database.sqlite.SQLiteReadOnlyDatabaseException
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +37,6 @@ class MainFragment : Fragment(), SongListAdapter.ClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewmodel.getSongs().observe(viewLifecycleOwner){ it ->
-            Log.e("rv---","$it")
             binding.rvSongs.apply {
                 adapter = SongListAdapter(it,requireContext(),this@MainFragment)
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
@@ -45,7 +46,16 @@ class MainFragment : Fragment(), SongListAdapter.ClickListener {
     }
 
     override fun cLick(music : Music) {
-        findNavController().navigate(R.id.action_mainFragment_to_songPlayerFragment, bundleOf("music" to music))
+        fragmentManager?.commit {
+            val b = Bundle()
+            b.putParcelable("music",music)
+            val fragment = SongPlayerFragment()
+            fragment.arguments = b
+            add(R.id.container,fragment)
+            addToBackStack("fragment")
+        }
+
+//        findNavController().navigate(R.id.action_mainFragment_to_songPlayerFragment, bundleOf("music" to music))
     }
 
 

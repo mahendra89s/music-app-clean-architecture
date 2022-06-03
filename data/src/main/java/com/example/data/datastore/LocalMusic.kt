@@ -20,9 +20,7 @@ import java.util.concurrent.TimeUnit
 class LocalMusic(
     @ApplicationContext val context: Context
 ) {
-
     var songs: MutableList<DataMusic> = mutableListOf<DataMusic>()
-
     private var songList = MutableStateFlow<List<DataMusic>>(listOf())
     private val _songList: StateFlow<List<DataMusic>>
         get() = songList
@@ -71,7 +69,6 @@ class LocalMusic(
         if (songs.isEmpty()) {
             fetchSongFromPhone()
         }
-        Log.e("songList", "${songList.value}")
         return _songList
     }
 
