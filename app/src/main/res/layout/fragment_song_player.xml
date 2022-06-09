@@ -8,9 +8,13 @@
         <variable
             name="data"
             type="com.example.musicapp.model.Music" />
+        <variable
+            name = "viewmodel"
+            type="com.example.musicapp.viewmodel.SongPlayerViewModel"
+            />
     </data>
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
+    <com.example.musicapp.view.MotionLayoutTouchListener
         android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -100,12 +104,12 @@
             app:layout_constraintTop_toBottomOf="@id/artist_name" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/d20"
             android:fontFamily="@font/noto_sans_bold"
-            android:text="@string/time_0_0"
+
             android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/music_seekbar" />
@@ -127,6 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/d80"
             android:background="@drawable/ic_pause"
+            android:onClick="@{viewmodel.onPlayPauseButtonClick}"
             app:layout_constraintLeft_toRightOf="@id/previous"
             app:layout_constraintRight_toLeftOf="@id/next"
             app:layout_constraintTop_toBottomOf="@id/music_seekbar" />
@@ -153,5 +158,5 @@
             app:layout_constraintTop_toTopOf="@id/pause_play" />
 
 
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </com.example.musicapp.view.MotionLayoutTouchListener>
 </layout>

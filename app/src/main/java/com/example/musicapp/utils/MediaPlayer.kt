@@ -49,4 +49,12 @@ class MediaPlayer @Inject constructor(
     fun isPlaying():Boolean{
         return media?.isPlaying!!
     }
+
+    fun isCompleted(): Boolean{
+        var isCompleted = false
+        media?.setOnCompletionListener {
+            isCompleted = true
+        }
+        return isCompleted
+    }
 }

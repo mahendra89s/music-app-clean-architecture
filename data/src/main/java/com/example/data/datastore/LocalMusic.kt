@@ -51,7 +51,7 @@ class LocalMusic(
                     val id = it.getLong(idColumn)
                     val title = it.getString(titleColumn)
                     val artist = it.getString(artistColumn)
-                    val duration = it.getString(durationColumn)
+                    val duration = it.getLong(durationColumn)
                     val data = it.getString(dataColumn)
                     val contenturi = ContentUris.withAppendedId(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

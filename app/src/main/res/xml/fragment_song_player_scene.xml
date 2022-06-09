@@ -6,9 +6,9 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="1000">
+        motion:duration="500">
         <OnSwipe motion:dragDirection="dragDown"
-            motion:maxAcceleration="200"
+            motion:maxAcceleration="20"
             motion:touchRegionId="@+id/constraintLayout"
             />
 
@@ -19,13 +19,12 @@
         motion:duration="1000">
         <OnSwipe motion:dragDirection="dragUp"
             motion:maxAcceleration="200"
-            motion:touchRegionId="@+id/constraintLayout"
-            />
+            motion:touchRegionId="@+id/constraintLayout" />
+
 
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
-
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -36,7 +35,7 @@
             motion:layout_constraintLeft_toLeftOf="parent"
             motion:layout_constraintRight_toRightOf="parent">
         </Constraint>
-        <Constraint android:id="@+id/image_container"
+        <Constraint android:id="@id/image_container"
             android:layout_width="@dimen/d80"
             android:layout_height="@dimen/d80"
             android:layout_marginStart="@dimen/d50"
@@ -44,7 +43,7 @@
             motion:layout_constraintTop_toTopOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             />
-        <Constraint android:id="@+id/previous"
+        <Constraint android:id="@id/previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             motion:layout_constraintRight_toLeftOf="@id/pause_play"
@@ -52,7 +51,7 @@
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintTop_toTopOf="@id/constraintLayout"
             />
-        <Constraint android:id="@+id/pause_play"
+        <Constraint android:id="@id/pause_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             motion:layout_constraintRight_toLeftOf="@id/next"
@@ -60,7 +59,7 @@
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintTop_toTopOf="@id/constraintLayout"
             />
-        <Constraint android:id="@+id/next"
+        <Constraint android:id="@id/next"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             motion:layout_constraintLeft_toRightOf="@id/pause_play"
@@ -68,32 +67,32 @@
             motion:layout_constraintTop_toTopOf="@id/constraintLayout"
             motion:layout_constraintRight_toRightOf="@id/constraintLayout"
             />
-        <Constraint android:id="@+id/separator"
+        <Constraint android:id="@id/separator"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"
             />
-        <Constraint android:id="@+id/artist_name"
+        <Constraint android:id="@id/artist_name"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"
             />
-        <Constraint android:id="@+id/song_name"
+        <Constraint android:id="@id/song_name"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"
             />
-        <Constraint android:id="@+id/textView"
+        <Constraint android:id="@id/timer"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"
             />
-        <Constraint android:id="@+id/textView2"
+        <Constraint android:id="@id/textView2"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"
             />
-        <Constraint android:id="@+id/music_seekbar"
+        <Constraint android:id="@id/music_seekbar"
             motion:layout_constraintBottom_toBottomOf="@id/constraintLayout"
             motion:layout_constraintLeft_toLeftOf="@id/constraintLayout"
             android:visibility="gone"

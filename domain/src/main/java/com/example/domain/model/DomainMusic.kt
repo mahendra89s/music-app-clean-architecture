@@ -6,7 +6,7 @@ data class DomainMusic(
     val id : Long,
     val title : String,
     val artist : String,
-    val duration : String,
+    val duration : Long,
     val data : String,
     val uri : Uri
 )

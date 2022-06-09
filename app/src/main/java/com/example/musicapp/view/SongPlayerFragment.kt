@@ -1,24 +1,27 @@
 package com.example.musicapp.view
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.musicapp.R
 import com.example.musicapp.databinding.FragmentSongPlayerBinding
 import com.example.musicapp.model.Music
 import com.example.musicapp.model.SongFragmentMotionState
 import com.example.musicapp.utils.MediaPlayer
+import com.example.musicapp.utils.PlayPauseEvent
+import com.example.musicapp.utils.Timer
+import com.example.musicapp.utils.setTime
+import com.example.musicapp.viewmodel.SongPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,10 +33,13 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
 
     @Inject
     lateinit var mediaPlayer: MediaPlayer
+
+    @Inject
+    lateinit var timer: Timer
     lateinit var binding: FragmentSongPlayerBinding
     lateinit var paramsViewGroup: FrameLayout.LayoutParams
 
-    var motionFlag = false
+    val viewmodel by viewModels<SongPlayerViewModel>()
 
     private var motionState = MutableStateFlow(SongFragmentMotionState.EXPANDED)
 
@@ -47,6 +53,7 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val music = arguments?.getParcelable<Music>("music")
@@ -55,25 +62,61 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
         initializeSong(music?.uri!!)
 
 
+
+        binding.pausePlay.setOnTouchListener { _view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    viewmodel.onPlayPauseButtonClick(_view)
+                }
+            }
+            true
+        }
+
+        timer.invoke(mediaPlayer.getDuration().toLong())
+
+        viewmodel.timerEvent.observe(viewLifecycleOwner) {
+            lifecycleScope.launchWhenStarted {
+                when (it) {
+                    PlayPauseEvent.Play -> {
+                        binding.pausePlay.background =
+                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_pause)
+                        timer.startTime()
+                        timer.timer.collect { time ->
+                            binding.musicSeekbar.progress = mediaPlayer.getCurrentPosition()
+                            binding.timer.setTime(time)
+                        }
+                    }
+                    PlayPauseEvent.Pause -> {
+                        Log.e("pause", "pause")
+                        binding.pausePlay.background =
+                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_play)
+                        timer.pauseTime()
+                    }
+                    PlayPauseEvent.Stop -> {
+                        timer.stopTimer()
+                    }
+                    else -> {
+                    }
+
+                }
+            }
+
+        }
+
         lifecycleScope.launchWhenStarted {
             motionState.collect {
                 motionLayoutListener(it)
             }
         }
+
     }
 
-    private fun initializeSong(id: Uri) {
-        mediaPlayer.initializeMediaPlayer(id)
-        initializeSeekbar()
-        binding.pausePlay.setOnClickListener {
-            mediaPlayer.playAndPause()
-            if (!mediaPlayer.isPlaying()) {
-                it.background = ContextCompat.getDrawable(it.context, R.drawable.ic_play)
-            } else {
-                it.background = ContextCompat.getDrawable(it.context, R.drawable.ic_pause)
-            }
-        }
 
+    private fun initializeSong(id: Uri) {
+
+        mediaPlayer.initializeMediaPlayer(id)
+
+        binding.musicSeekbar.max = mediaPlayer.getDuration()
         binding.musicSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 if (p2) mediaPlayer.mediaSeekTo(p1)
@@ -90,27 +133,11 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
         })
     }
 
-    private fun initializeSeekbar() {
-        binding.musicSeekbar.max = mediaPlayer.getDuration()
-        val handler = Handler()
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                try {
-                    binding.musicSeekbar.progress = mediaPlayer.getCurrentPosition()
-                    handler.postDelayed(this, 1000)
-                } catch (e: Exception) {
-                    binding.musicSeekbar.progress = 0
-                }
-            }
-        }, 0)
-    }
-
     private suspend fun motionLayoutListener(motion: SongFragmentMotionState) {
 
         binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
 
             override fun onTransitionStarted(p0: MotionLayout?, startId: Int, endId: Int) {
-
                 if (motion == SongFragmentMotionState.COLLAPSED) {
                     paramsViewGroup = FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -138,6 +165,8 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
                         Gravity.BOTTOM
                     )
                     binding.motionLayout.layoutParams = paramsViewGroup
+
+
                 }
                 lifecycleScope.launch {
                     switchMotionState(motion)
@@ -165,5 +194,9 @@ class SongPlayerFragment @Inject constructor() : Fragment() {
         }
     }
 
-
+    override fun onStop() {
+        super.onStop()
+        Log.e("hello","stop")
+        timer.stopTimer()
+    }
 }

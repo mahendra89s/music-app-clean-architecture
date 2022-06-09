@@ -3,9 +3,11 @@ package com.example.musicapp.utils
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
 @BindingAdapter("bind:imageUri")
@@ -20,13 +22,30 @@ fun setImageViewSrc(imageView: ImageView,data : Uri){
 }
 
 @BindingAdapter("bind:setTime")
-fun setTimeToTextView(textView: TextView, duration : String){
-    val hours = TimeUnit.MILLISECONDS.toHours(duration.toLong())
-    val minute = TimeUnit.MILLISECONDS.toMinutes(duration.toLong())
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) % 60
+fun setTimeToTextView(textView: TextView, duration : Long){
+    Log.e("duration","$duration")
+    val f = DecimalFormat("00")
+    val hours = TimeUnit.MILLISECONDS.toHours(duration)
+    val minute = TimeUnit.MILLISECONDS.toMinutes(duration)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(duration) % 60
+    Log.e("time","$hours $minute $seconds")
     if(hours.toInt() == 0){
-        textView.text = "$minute:$seconds"
+        textView.text = "${f.format(minute)}:${f.format(seconds)}"
     } else{
-        textView.text = "$hours:$minute:$seconds"
+        textView.text = "${f.format(hours)}:${f.format(minute)}:${f.format(seconds)}"
     }
+}
+
+fun TextView.setTime(duration: Long){
+    val f = DecimalFormat("00")
+    val hours = TimeUnit.MILLISECONDS.toHours(duration)
+    val minute = TimeUnit.MILLISECONDS.toMinutes(duration)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(duration) % 60
+    Log.e("time","$hours $minute $seconds")
+    if(hours.toInt() == 0){
+        text = "${f.format(minute)}:${f.format(seconds)}"
+    } else{
+        text = "${f.format(hours)}:${f.format(minute)}:${f.format(seconds)}"
+    }
+
 }
