@@ -2,6 +2,7 @@ package com.example.musicapp.di
 
 import android.content.Context
 import com.example.musicapp.utils.MediaPlayer
+import com.example.musicapp.utils.Notification
 import com.example.musicapp.utils.Timer
 import dagger.Module
 import dagger.Provides
@@ -24,5 +25,11 @@ class Module {
     @Singleton
     fun provideTimer(): Timer {
         return Timer()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotification(@ApplicationContext context: Context) : Notification{
+        return Notification(context)
     }
 }

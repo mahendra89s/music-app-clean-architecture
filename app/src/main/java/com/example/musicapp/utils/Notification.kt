@@ -7,6 +7,8 @@ import android.content.Intent
 import android.media.session.MediaSession
 import android.os.Build
 import android.provider.MediaStore
+import android.support.v4.media.session.MediaSessionCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.musicapp.R
 import com.example.musicapp.model.Music
@@ -18,7 +20,7 @@ import javax.inject.Inject
 class Notification @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    private lateinit var builder: Notification.Builder
+    private lateinit var builder: Notification
     private var drw_previous : Int = -1
     private var drw_next : Int = -1
     private var previousPendingIntent: PendingIntent? = null
@@ -27,7 +29,6 @@ class Notification @Inject constructor(
 
     companion object{
         const val CHANNEL_ID = "channel1"
-
         const val ACTION_PREVIOUS = "actionprevious"
         const val ACTION_PLAY = "actionplay"
         const val ACTION_NEXT = "actionnext"
@@ -36,7 +37,7 @@ class Notification @Inject constructor(
     operator fun invoke(music: Music,pos : Int,size:Int,playButton :Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManagerCompat = NotificationManagerCompat.from(context)
-            val mediaSessionCompat = MediaSession(context, "tag")
+            val mediaSession = MediaSessionCompat(context, "tag")
 
             val icon = MediaStore.Images.Media.getBitmap(context.contentResolver, music.uri)
 
@@ -67,7 +68,7 @@ class Notification @Inject constructor(
             playPendingIntent = PendingIntent.getBroadcast(context,0,intentPlay,PendingIntent.FLAG_UPDATE_CURRENT)
 
 
-            builder = Notification.Builder(context)
+            builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(music.title)
                 .setContentText(music.artist)
                 .setSmallIcon(R.drawable.ic_launcher_background)
@@ -76,12 +77,16 @@ class Notification @Inject constructor(
                 .addAction(drw_next,"Next",nextPendingIntent)
                 .addAction(playButton,"Play",playPendingIntent)
                 .setStyle(
-                    Notification.MediaStyle()
-                        .setShowActionsInCompactView(0, 1, 2)
-                        .setMediaSession(mediaSessionCompat.sessionToken)
+                    androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0,1,2)
+                        .setMediaSession(mediaSession.sessionToken)
                 )
+                .setOnlyAlertOnce(true)
+                .setShowWhen(false)
                 .setPriority(Notification.PRIORITY_LOW)
+                .build()
+            notificationManagerCompat.notify(1,builder)
         }
+
 
 
     }
