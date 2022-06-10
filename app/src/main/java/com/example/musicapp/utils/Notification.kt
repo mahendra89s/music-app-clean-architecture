@@ -82,7 +82,7 @@ class Notification @Inject constructor(
                 )
                 .setOnlyAlertOnce(true)
                 .setShowWhen(false)
-                .setPriority(Notification.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .build()
             notificationManagerCompat.notify(1,builder)
         }

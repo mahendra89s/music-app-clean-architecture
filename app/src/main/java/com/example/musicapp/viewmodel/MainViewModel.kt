@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.CurrentSongSession
 import com.example.domain.usecase.GetSongsFromDeviceUseCase
 import com.example.musicapp.mapper.DomainMusicMapper
 import com.example.musicapp.model.Music
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getSongsFromDeviceUseCase: GetSongsFromDeviceUseCase,
-    private val domainMusicMapper: DomainMusicMapper
+    private val domainMusicMapper: DomainMusicMapper,
+    private val session: CurrentSongSession
 ) : ViewModel() {
 
     private val _songs = MutableLiveData<List<Music>>()
@@ -32,4 +34,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun getSongs(): LiveData<List<Music>> = songs
+
+    fun setSongSession(music: Music){
+        session.setSongSession(domainMusicMapper.mapToEntity(music))
+        Log.e("music","${session.session.value}")
+    }
 }

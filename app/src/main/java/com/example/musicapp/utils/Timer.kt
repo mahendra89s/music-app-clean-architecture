@@ -13,7 +13,7 @@ class Timer {
 
     var whenPaused: Long = 0;
     var time: Long = 0;
-    private lateinit var timerCountUp: PlaybackTimer
+    var timerCountUp: PlaybackTimer?=null
 
     operator fun invoke(seconds: Long) {
         time = if (whenPaused.toInt()>0) seconds - whenPaused else seconds
@@ -28,17 +28,17 @@ class Timer {
     }
 
     fun startTime() {
-        timerCountUp.start()
+        timerCountUp?.start()
     }
 
     fun pauseTime() {
         whenPaused = _timer.value
         Log.e("whenPause","$whenPaused")
-        timerCountUp.cancel()
+        timerCountUp?.cancel()
     }
 
     fun stopTimer() {
-        timerCountUp.cancel()
+        timerCountUp?.cancel()
         _timer.update { 0 }
         whenPaused = 0
     }

@@ -4,8 +4,10 @@ import android.os.CountDownTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Singleton
 
 
+@Singleton
 abstract class PlaybackTimer(
     val duration: Long,
 ) : CountDownTimer(duration,1000){

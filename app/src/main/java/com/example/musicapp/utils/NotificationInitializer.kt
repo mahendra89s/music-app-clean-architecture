@@ -3,7 +3,7 @@ package com.example.musicapp.utils
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.startup.Initializer
 import com.example.musicapp.service.NotificationActionService
@@ -20,7 +20,7 @@ class NotificationInitializer : Initializer<Boolean>{
             context.getSystemService(NotificationManager::class.java)
                 ?.createNotificationChannel(notificationChannel)
 
-            context.registerReceiver(NotificationActionService::class.java,Intent("TRACKS"))
+            context.registerReceiver(NotificationActionService(), IntentFilter("TRACKS"))
         }
         return true
     }

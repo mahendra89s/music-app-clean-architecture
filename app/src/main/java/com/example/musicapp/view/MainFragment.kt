@@ -41,10 +41,11 @@ class MainFragment : Fragment(), SongListAdapter.ClickListener {
 
     override fun cLick(id : Music) {
         childFragmentManager.commit {
-            val b = Bundle()
-            b.putParcelable("music",id)
+//            val b = Bundle()
+//            b.putParcelable("music",id)
             val fragment = SongPlayerFragment()
-            fragment.arguments = b
+            viewmodel.setSongSession(id)
+//            fragment.arguments = b
             replace(R.id.child_container,fragment)
             addToBackStack(null)
         }

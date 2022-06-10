@@ -2,20 +2,17 @@ package com.example.data.datastore
 
 import android.content.ContentUris
 import android.content.Context
-import android.provider.ContactsContract
 
 import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import com.example.data.model.DataMusic
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import java.sql.Time
-import java.util.Calendar.MILLISECOND
-import java.util.concurrent.TimeUnit
 
 class LocalMusic(
     @ApplicationContext val context: Context
@@ -62,7 +59,9 @@ class LocalMusic(
                 }
                 songList.value = songs
             }
+
         }
+        Log.e("Songs :", "${songList.value}")
     }
 
     suspend fun getSongs(): StateFlow<List<DataMusic>> {
@@ -72,4 +71,26 @@ class LocalMusic(
         return _songList
     }
 
+    private fun getCurrentSong(id: Long): Int {
+        val currentSong = songList.value.find {
+            it.id == id
+        }
+        return songList.value.indexOf(currentSong)
+    }
+
+    fun fetchNextSong(id: Long) = flow {
+        if (getCurrentSong(id) != songList.value.size-1) {
+            emit(songList.value[getCurrentSong(id) + 1])
+        }
+    }
+
+    fun fetchPreviousSong(id: Long) = flow {
+        if (getCurrentSong(id) != 0) {
+            emit(songList.value[getCurrentSong(id) - 1])
+        }
+    }
 }
+
+
+
+

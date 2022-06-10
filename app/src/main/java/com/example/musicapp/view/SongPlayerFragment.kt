@@ -1,7 +1,6 @@
 package com.example.musicapp.view
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +11,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.musicapp.R
 import com.example.musicapp.databinding.FragmentSongPlayerBinding
@@ -21,13 +19,12 @@ import com.example.musicapp.model.SongFragmentMotionState
 import com.example.musicapp.utils.*
 import com.example.musicapp.viewmodel.SongPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SongPlayerFragment @Inject constructor() : Fragment(){
-
+class SongPlayerFragment @Inject constructor() : Fragment() {
 
     @Inject
     lateinit var mediaPlayer: MediaPlayer
@@ -35,14 +32,17 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
     @Inject
     lateinit var timer: Timer
 
-    @Inject lateinit var notification:Notification
+    @Inject
+    lateinit var notification: Notification
     lateinit var binding: FragmentSongPlayerBinding
     lateinit var paramsViewGroup: FrameLayout.LayoutParams
 
     val viewmodel by viewModels<SongPlayerViewModel>()
 
     private var motionState = MutableStateFlow(SongFragmentMotionState.EXPANDED)
-    
+
+    lateinit var music: Music
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,14 +53,18 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
     }
 
 
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val music = arguments?.getParcelable<Music>("music")
-        binding.data = music
-        paramsViewGroup = binding.motionLayout.layoutParams as FrameLayout.LayoutParams
-        initializeSong(music?.uri!!)
 
+        viewmodel.session.observe(viewLifecycleOwner) {
+            binding.data = it
+            initializeSong(it.uri)
+            music = it
+            timer.stopTimer()
+        }
+
+        paramsViewGroup = binding.motionLayout.layoutParams as FrameLayout.LayoutParams
 
 
         binding.pausePlay.setOnTouchListener { _view, motionEvent ->
@@ -71,13 +75,30 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
             }
             true
         }
+        binding.next.setOnTouchListener { _view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    viewmodel.getNextSong()
+                }
+            }
+            true
+        }
+        binding.previous.setOnTouchListener { _view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    viewmodel.getPreviousSong()
+                }
+            }
+            true
+        }
 
-        timer.invoke(mediaPlayer.getDuration().toLong())
+
 
         viewmodel.timerEvent.observe(viewLifecycleOwner) {
             lifecycleScope.launchWhenStarted {
                 when (it) {
                     PlayPauseEvent.Play -> {
+                        timer.invoke(mediaPlayer.getDuration().toLong())
                         onPlay(music)
                         binding.pausePlay.background =
                             ContextCompat.getDrawable(requireContext(), R.drawable.ic_pause)
@@ -169,7 +190,7 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
                     binding.motionLayout.layoutParams = paramsViewGroup
                 }
                 lifecycleScope.launch {
-                        switchMotionState(motion)
+                    switchMotionState(motion)
                 }
 
             }
@@ -183,8 +204,6 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
 
             }
         })
-
-
     }
 
     private suspend fun switchMotionState(state: SongFragmentMotionState) {
@@ -196,13 +215,10 @@ class SongPlayerFragment @Inject constructor() : Fragment(){
 
     override fun onStop() {
         super.onStop()
-        Log.e("hello","stop")
         timer.stopTimer()
     }
 
-    private fun onPlay(music: Music){
-        notification.invoke(music,R.id.pause_play,0,1)
-
+    private fun onPlay(music: Music) {
+        notification.invoke(music, 1, 0, R.id.pause_play)
     }
-
 }
